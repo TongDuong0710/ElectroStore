@@ -1,0 +1,18 @@
+package com.example.application.mapper;
+
+import com.example.application.command.ProductCreateCmd;
+import com.example.application.configurations.MapStructCentralConfig;
+import com.example.application.dto.ProductDto;
+import com.example.application.dto.ProductSummaryDto;
+import com.example.domain.model.Product;
+import org.mapstruct.Mapper;
+
+@Mapper(config = MapStructCentralConfig.class)
+public interface ProductAppMapper {
+
+    Product toDomain(ProductCreateCmd cmd);
+
+    ProductDto toDto(Product product);
+
+    ProductSummaryDto toSummaryDto(Product product);
+}
