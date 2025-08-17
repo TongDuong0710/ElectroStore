@@ -9,16 +9,37 @@ import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(config = MapStructCentralConfig.class)
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+@Mapper(componentModel = "spring", config = MapStructCentralConfig.class)
 public interface BasketItemMapper {
 
     // Entity -> Domain
     @Mapping(target = "productId", source = "product.id")
+    @Mapping(target = "basketId", source = "basketId")
     BasketItem toDomain(BasketItemEntity entity);
+
+    List<BasketItem> toDomain(List<BasketItemEntity> entities);
+
+    default Map<Long, BasketItem> map(List<BasketItemEntity> items) {
+        if (items == null) return new LinkedHashMap<>();
+        return items.stream()
+                .map(this::toDomain)
+                .collect(Collectors.toMap(
+                        BasketItem::getProductId,  // key
+                        Function.identity(),       // value
+                        (a, b) -> b,               // merge function if duplicate
+                        LinkedHashMap::new         // preserve order
+                ));
+    }
 
     // Domain -> new Entity
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "basket", expression = "java(refBasket(basketId))")
+    @Mapping(target = "basketId", source = "basketId")
     @Mapping(target = "product", expression = "java(refProduct(item.getProductId()))")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

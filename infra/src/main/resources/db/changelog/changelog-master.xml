@@ -7,7 +7,9 @@
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="DDL_20250815001_create_tbl_prod_and_deal" author="TONG.DUONG">
-        <sqlFile path="../changeset/ddl/DDL_20250815001_create_tbl_prod_and_deal" relativeToChangelogFile="true"/>
+        <sqlFile
+                path="db/changeset/DDL_20250815001_create_tbl_prod_and_deal.sql"
+                relativeToChangelogFile="false"/>
     </changeSet>
 
 </databaseChangeLog>

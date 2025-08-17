@@ -8,26 +8,22 @@ import com.example.application.mapper.DealAppMapper;
 import com.example.application.provider.DealRepository;
 import com.example.application.service.AdminDealAppService;
 import com.example.domain.model.Deal;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AdminDealAppServiceImpl implements AdminDealAppService {
 
     private final DealRepository dealRepository;
     private final DealAppMapper dealMapper;
 
-    public AdminDealAppServiceImpl(DealRepository dealRepository,
-                                   DealAppMapper dealMapper) {
-        this.dealRepository = dealRepository;
-        this.dealMapper = dealMapper;
-    }
-
     @Override
     public DealDto create(DealCreateCmd cmd) {
         Deal deal = dealMapper.toDomain(cmd);
-        dealRepository.save(deal);
+        deal = dealRepository.save(deal);
         return dealMapper.toDto(deal);
     }
 

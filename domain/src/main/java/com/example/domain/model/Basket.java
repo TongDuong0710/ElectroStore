@@ -10,19 +10,22 @@ public class Basket {
     // key = productId for quick merge/update
     private final Map<Long, BasketItem> items = new LinkedHashMap<>();
 
-    public Basket(Long id, String userId) {
+    public Basket(Long id, String userId, Map<Long, BasketItem> items) {
         if (userId == null || userId.isBlank()) throw new IllegalArgumentException("userId required");
         this.id = id;
         this.userId = userId;
+        if (items != null) {
+            this.items.putAll(items);
+        }
     }
 
     /** FLOW: add item → merge by productId (domain-level, stock decrease happens in application using StockDomainService) */
-    public void addOrIncrease(Long productId, int qty) {
-        BasketItem existing = items.get(productId);
+    public void addOrIncrease(BasketItem basketItem) {
+        BasketItem existing = items.get(basketItem.getProductId());
         if (existing == null) {
-            items.put(productId, new BasketItem(null, productId, qty));
+            items.put(basketItem.getProductId(), basketItem);
         } else {
-            existing.addQuantity(qty);
+            existing.addQuantity(basketItem.getQuantity());
         }
     }
 

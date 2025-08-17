@@ -10,6 +10,6 @@ public class DealCreateRequest {
     private Long productId;
     private String dealType; // e.g., "BUY_ONE_GET_ONE_50"
     private BigDecimal discountPercentage;
-    private LocalDateTime expirationTime;
+    private LocalDateTime expirationDateTime;
 }
 

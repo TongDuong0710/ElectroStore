@@ -13,7 +13,7 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", config = MapStructCentralConfig.class)
+@Mapper(config = MapStructCentralConfig.class)
 public interface ProductApiMapper {
 
     ProductCreateCmd toCommand(ProductCreateRequest request);
@@ -33,6 +33,4 @@ public interface ProductApiMapper {
                 page.totalElements()
         );
     }
-
-
 }

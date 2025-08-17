@@ -1,9 +1,11 @@
 package com.example.domain.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 @Data
+@NoArgsConstructor
 public class Deal {
     private Long id;
     private Long productId;

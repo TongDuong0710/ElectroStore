@@ -1,10 +1,17 @@
 package com.example.application.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
-public record BasketItemView(
-        Long productId,
-        String productName,
-        int quantity,
-        BigDecimal unitPrice
-) {}
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class BasketItemView {
+    private Long productId;
+    private String productName;
+    private int quantity;
+    private BigDecimal unitPrice;
+}

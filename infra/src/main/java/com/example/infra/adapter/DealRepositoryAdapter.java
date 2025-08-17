@@ -9,13 +9,13 @@ import com.example.infra.repository.DealJpaRepository;
 import com.example.infra.repository.ProductJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class DealRepositoryAdapter implements DealRepository {
 
@@ -38,7 +38,7 @@ public class DealRepositoryAdapter implements DealRepository {
         entity.setProduct(productEntity);
         entity.setDealType(deal.getDealType());
         entity.setDescription(deal.getDescription());
-        entity.setExpirationDateTime(LocalDateTime.from(deal.getExpirationDateTime()));
+        entity.setExpirationDateTime(deal.getExpirationDateTime());
 
         DealEntity saved = dealJpaRepository.save(entity);
         return dealMapper.toDomain(saved);

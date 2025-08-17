@@ -1,7 +1,10 @@
 package com.example.infra.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,6 +14,9 @@ import java.util.List;
 @Table(name = "basket",
         indexes = @Index(name = "idx_basket_user_id", columnList = "user_id"))
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BasketEntity {
 
     @Id
@@ -20,7 +26,7 @@ public class BasketEntity {
     @Column(name="user_id", nullable = false, length = 100)
     private String userId;
 
-    @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "basketId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BasketItemEntity> items = new ArrayList<>();
 
     @Column(name="created_at", nullable = false)

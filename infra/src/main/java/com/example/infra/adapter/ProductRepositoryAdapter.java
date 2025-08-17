@@ -44,8 +44,8 @@ public class ProductRepositoryAdapter implements ProductRepository {
         return jpa.findByFilter(
                         filter.category(),
                         filter.available(),
-                        filter.priceMin(),
-                        filter.priceMax(),
+                        filter.minPrice(),
+                        filter.maxPrice(),
                         pr)
                 .map(mapper::toDomain)
                 .getContent();
@@ -56,8 +56,8 @@ public class ProductRepositoryAdapter implements ProductRepository {
         return jpa.countByFilter(
                 filter.category(),
                 filter.available(),
-                filter.priceMin(),
-                filter.priceMax());
+                filter.minPrice(),
+                filter.maxPrice());
     }
 
     @Override

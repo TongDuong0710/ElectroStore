@@ -7,7 +7,7 @@ import com.example.application.dto.ProductSummaryDto;
 import com.example.domain.model.Product;
 import org.mapstruct.Mapper;
 
-@Mapper(config = MapStructCentralConfig.class)
+@Mapper(componentModel = "spring", config = MapStructCentralConfig.class)
 public interface ProductAppMapper {
 
     Product toDomain(ProductCreateCmd cmd);

@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 
 public record ProductFilter(
         String category,
-        BigDecimal priceMin,
-        BigDecimal priceMax,
-        Boolean available
+        BigDecimal minPrice,
+        BigDecimal maxPrice,
+        Boolean available,
+        String name
 ) {}

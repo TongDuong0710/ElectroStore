@@ -11,8 +11,9 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", config = MapStructCentralConfig.class)
+@Mapper(config = MapStructCentralConfig.class)
 public interface CustomerCatalogApiMapper {
+
     ProductFilter toFilter(ProductFilterRequest request);
     ProductSummaryResponse toResponse(ProductSummaryDto dto);
     default PageResponse<ProductSummaryResponse> toSummaryPageResponse(PageResult<ProductSummaryDto> page) {

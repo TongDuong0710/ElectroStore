@@ -8,12 +8,14 @@ import com.example.application.configurations.MapStructCentralConfig;
 import com.example.application.dto.DealDto;
 import com.example.application.dto.PageResult;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", config = MapStructCentralConfig.class)
+@Mapper(config = MapStructCentralConfig.class)
 public interface DealApiMapper {
 
+    @Mapping(target = "expirationDateTime", source = "expirationDateTime")
     DealCreateCmd toCommand(DealCreateRequest request);
 
     DealResponse toResponse(DealDto dto);

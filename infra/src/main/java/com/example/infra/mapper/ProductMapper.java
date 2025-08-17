@@ -5,7 +5,7 @@ import com.example.infra.configurations.MapStructCentralConfig;
 import com.example.infra.entity.ProductEntity;
 import org.mapstruct.*;
 
-@Mapper(config = MapStructCentralConfig.class)
+@Mapper(componentModel = "spring", config = MapStructCentralConfig.class)
 public interface ProductMapper {
 
     // Entity -> Domain

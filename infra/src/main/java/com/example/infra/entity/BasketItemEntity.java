@@ -19,9 +19,8 @@ public class BasketItemEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "basket_id", nullable = false)
-    private BasketEntity basket;
+    @Column(name = "basket_id", nullable = false)
+    private Long basketId;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)

@@ -5,6 +5,7 @@ import com.example.api.dto.DealResponse;
 import com.example.api.dto.base.BaseResponseApi;
 import com.example.api.dto.base.PageResponse;
 import com.example.api.mapper.DealApiMapper;
+import com.example.application.dto.DealDto;
 import com.example.application.service.AdminDealAppService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,9 +23,9 @@ public class AdminDealController {
 
     @Operation(summary = "Create a new deal for a product")
     @PostMapping
-    public BaseResponseApi<Void> createDeal(@RequestBody DealCreateRequest request) {
-        dealService.create(mapper.toCommand(request));
-        return BaseResponseApi.success(null);
+    public BaseResponseApi<DealResponse> createDeal(@RequestBody DealCreateRequest request) {
+        DealDto dealDto = dealService.create(mapper.toCommand(request));
+        return BaseResponseApi.success(mapper.toResponse(dealDto));
     }
 
     @Operation(summary = "Delete an existing deal by ID")

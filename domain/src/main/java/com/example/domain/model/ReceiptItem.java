@@ -1,10 +1,12 @@
 package com.example.domain.model;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.With;
 
 import java.math.BigDecimal;
 
-@Data
+@Builder
+@With
 public record ReceiptItem(
         Long productId,
         String productName,

@@ -1,7 +1,13 @@
 package com.example.infra.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,6 +21,10 @@ import java.time.LocalDateTime;
                 @Index(name = "idx_product_created_at_id", columnList = "created_at, id")
         })
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class ProductEntity {
 
     @Id
@@ -36,13 +46,12 @@ public class ProductEntity {
     @Column(nullable = false)
     private Boolean available = Boolean.TRUE;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "CREATED_AT", updatable = false)
+    @CreatedDate
+    private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
-
-    @PreUpdate
-    void onUpdate() { this.updatedAt = LocalDateTime.now(); }
+    @Column(name = "UPDATED_AT")
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
 }

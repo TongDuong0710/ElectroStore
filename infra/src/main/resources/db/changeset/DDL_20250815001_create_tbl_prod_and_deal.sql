@@ -50,10 +50,12 @@ CREATE TABLE basket (
 CREATE INDEX idx_basket_user_id_status ON basket(user_id, status);
 
 CREATE TABLE basket_item (
-    id         BIGSERIAL PRIMARY KEY,
-    basket_id  BIGINT NOT NULL REFERENCES basket(id) ON DELETE CASCADE,
-    product_id BIGINT NOT NULL REFERENCES product(id) ON DELETE RESTRICT,
-    quantity   INTEGER NOT NULL CHECK (quantity > 0)
+    id          BIGSERIAL PRIMARY KEY,
+    basket_id   BIGINT NOT NULL REFERENCES basket(id) ON DELETE CASCADE,
+    product_id  BIGINT NOT NULL REFERENCES product(id) ON DELETE RESTRICT,
+    quantity    INTEGER NOT NULL CHECK (quantity > 0),
+    created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX idx_basket_item_basket_id ON basket_item(basket_id);
 CREATE INDEX idx_basket_item_product_id ON basket_item(product_id);

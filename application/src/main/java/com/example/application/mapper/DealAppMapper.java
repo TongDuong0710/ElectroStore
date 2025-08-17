@@ -6,7 +6,7 @@ import com.example.application.dto.DealDto;
 import com.example.domain.model.Deal;
 import org.mapstruct.Mapper;
 
-@Mapper(config = MapStructCentralConfig.class)
+@Mapper(componentModel = "spring", config = MapStructCentralConfig.class)
 public interface DealAppMapper {
 
     Deal toDomain(DealCreateCmd cmd);

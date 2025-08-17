@@ -7,7 +7,7 @@ import com.example.domain.model.Receipt;
 import com.example.domain.model.ReceiptItem;
 import org.mapstruct.Mapper;
 
-@Mapper(config = MapStructCentralConfig.class)
+@Mapper(componentModel = "spring", config = MapStructCentralConfig.class)
 public interface ReceiptAppMapper {
 
     ReceiptDto toDto(Receipt receipt);

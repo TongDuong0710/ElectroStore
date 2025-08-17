@@ -43,4 +43,7 @@ public class Product {
     private void syncAvailability() {
         this.available = (this.stock > 0);
     }
+    public boolean hasSufficientStock(int qty) {
+        return qty > 0 && stock >= qty;
+    }
 }

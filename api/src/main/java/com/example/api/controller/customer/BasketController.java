@@ -2,9 +2,9 @@ package com.example.api.controller.customer;
 
 import com.example.api.dto.AddToBasketRequest;
 import com.example.api.dto.BasketViewResponse;
-import com.example.api.dto.RemoveFromBasketRequest;
 import com.example.api.dto.base.BaseResponseApi;
 import com.example.api.mapper.BasketApiMapper;
+import com.example.application.command.RemoveFromBasketCmd;
 import com.example.application.service.BasketAppService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,14 +34,13 @@ public class BasketController {
         basketAppService.addToBasket(cmd);
         return BaseResponseApi.success(null);
     }
-
-    @Operation(summary = "Remove product from basket")
-    @DeleteMapping("/items")
+    @Operation(summary = "Delete product from basket")
+    @DeleteMapping("/items/{productId}")
     public BaseResponseApi<Void> removeFromBasket(
             @RequestHeader(value = "X-Customer-ID", required = false) String customerId,
-            @RequestBody RemoveFromBasketRequest request) {
-        String finalCustomerId = StringUtils.isNoneBlank(customerId) ? customerId : defaultCustomerId;
-        var cmd = basketApiMapper.toCommand(finalCustomerId, request);
+            @PathVariable Long productId) {
+
+        var cmd = new RemoveFromBasketCmd(customerId, productId);
         basketAppService.removeFromBasket(cmd);
         return BaseResponseApi.success(null);
     }

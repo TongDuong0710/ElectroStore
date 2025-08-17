@@ -6,15 +6,22 @@ import com.example.application.dto.BasketView;
 import com.example.domain.model.Basket;
 import com.example.domain.model.BasketItem;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Mapper(config = MapStructCentralConfig.class)
+@Mapper(componentModel = "spring", config = MapStructCentralConfig.class)
 public interface BasketAppMapper {
 
+    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "items", expression = "java(toItemViews(new java.util.ArrayList<>(basket.getItems())))")
     BasketView toView(Basket basket);
 
     BasketItemView toItemView(BasketItem item);
 
-    List<BasketItemView> toItemViews(List<BasketItem> items);
+    default List<BasketItemView> toItemViews(List<BasketItem> items) {
+        return items.stream().map(this::toItemView).collect(Collectors.toList());
+    }
 }
+
