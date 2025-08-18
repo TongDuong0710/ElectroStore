@@ -14,7 +14,7 @@ import static org.springframework.http.HttpStatus.*;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ResponseCode{
     NOT_FOUND(BAD_REQUEST, "DM-4000", "Server error"),
-    INSUFFICIENT_STOCK(BAD_REQUEST, "DM-4001", "Server error"),
+    INSUFFICIENT_STOCK(CONFLICT, "DM-4001", "Insufficient stock"),
 
     REQUIRE_USER_ID(BAD_REQUEST, "DM-4002", "UserId required"),
     PRODUCT_NOT_FOUND(BAD_REQUEST, "DM-4003", "Product not found"),
