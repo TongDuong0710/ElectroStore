@@ -15,5 +15,7 @@ public interface ProductRepositoryPort {
     List<Product> findByFilter(ProductFilterModel filter, int page, int size);
     long countByFilter(ProductFilterModel filter);
     List<Product> findAllByIds(List<Long> productIds);
+    boolean tryDecrementStock(Long productId, int qty);
+    List<Product> findAll();
 
 }

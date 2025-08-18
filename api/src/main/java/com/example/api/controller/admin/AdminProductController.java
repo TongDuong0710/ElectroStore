@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/products")
@@ -55,5 +56,14 @@ public class AdminProductController {
         ProductFilterRequest request = new ProductFilterRequest(category, minPrice, maxPrice, true, name);
         var result = productService.listProducts(mapper.toFilter(request), page, size);
         return BaseResponseApi.success(mapper.toPageResponse(result));
+    }
+    @Operation(summary = "List all products - only for testing purposes")
+    @GetMapping("/all")
+    public BaseResponseApi<List<ProductResponse>> listAllProducts() {
+
+        var result = productService.listAllProducts().stream()
+                .map(mapper::toResponse)
+                .toList();
+        return BaseResponseApi.success(result);
     }
 }

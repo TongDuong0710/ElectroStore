@@ -4,22 +4,15 @@ import com.example.domain.exception.DomainException;
 import com.example.domain.exception.ResponseCode;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
-
 @Data
-@Entity
 public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String category;
     private BigDecimal price;
     private int stock;
     private boolean available;
-    @Version
-    private Long version;
 
     public Product(Long id, String name, String category, BigDecimal price, int stock, boolean available) {
         if (name == null || name.isBlank()) throw new DomainException(ResponseCode.INVALID_PARAM, "Product name is required");

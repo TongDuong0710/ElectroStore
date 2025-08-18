@@ -47,5 +47,12 @@ public class AdminProductAppServiceImpl implements AdminProductAppService {
                 total, totalPages, page, size
         );
     }
+
+    @Override
+    public List<ProductDto> listAllProducts() {
+        return productRepository.findAll().stream()
+                .map(productMapper::toDto)
+                .toList();
+    }
 }
 
