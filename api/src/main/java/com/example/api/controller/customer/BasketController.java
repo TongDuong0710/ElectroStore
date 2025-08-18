@@ -4,10 +4,11 @@ import com.example.api.dto.AddToBasketRequest;
 import com.example.api.dto.BasketViewResponse;
 import com.example.api.dto.base.BaseResponseApi;
 import com.example.api.mapper.BasketApiMapper;
-import com.example.application.command.RemoveFromBasketCmd;
+import com.example.application.dto.RemoveFromBasketDto;
 import com.example.application.service.BasketAppService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class BasketController {
     @PostMapping("/items")
     public BaseResponseApi<Void> addToBasket(
             @RequestHeader(value = "X-Customer-ID", required = false) String customerId,
-            @RequestBody AddToBasketRequest request) {
+            @Valid @RequestBody AddToBasketRequest request) {
         String finalCustomerId = StringUtils.isNoneBlank(customerId) ? customerId : defaultCustomerId;
         var cmd = basketApiMapper.toCommand(finalCustomerId, request);
         basketAppService.addToBasket(cmd);
@@ -40,7 +41,7 @@ public class BasketController {
             @RequestHeader(value = "X-Customer-ID", required = false) String customerId,
             @PathVariable Long productId) {
 
-        var cmd = new RemoveFromBasketCmd(customerId, productId);
+        var cmd = new RemoveFromBasketDto(customerId, productId);
         basketAppService.removeFromBasket(cmd);
         return BaseResponseApi.success(null);
     }

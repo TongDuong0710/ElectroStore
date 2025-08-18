@@ -1,7 +1,7 @@
 package com.example.application.service.impl;
 
-import com.example.application.command.ProductCreateCmd;
-import com.example.application.command.ProductFilter;
+import com.example.application.dto.ProductCreateDto;
+import com.example.application.dto.ProductFilter;
 import com.example.application.dto.PageResult;
 import com.example.application.dto.ProductDto;
 import com.example.application.mapper.ProductAppMapper;
@@ -23,11 +23,11 @@ public class AdminProductAppServiceImpl implements AdminProductAppService {
     private final ProductFilterMapper productFilterMapper;
 
     @Override
-    public ProductDto create(ProductCreateCmd cmd) {
+    public ProductDto create(ProductCreateDto cmd) {
         // Map DTO to domain
         Product product = productMapper.toDomain(cmd);
-        productRepository.save(product); // persist
-        return productMapper.toDto(product);
+        Product savedProduct = productRepository.save(product); // persist
+        return productMapper.toDto(savedProduct);
     }
 
     @Override

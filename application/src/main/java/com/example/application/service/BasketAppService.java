@@ -1,15 +1,15 @@
 package com.example.application.service;
 
 
-import com.example.application.command.AddToBasketCmd;
-import com.example.application.command.RemoveFromBasketCmd;
+import com.example.application.dto.AddToBasketDto;
+import com.example.application.dto.RemoveFromBasketDto;
 import com.example.application.dto.BasketView;
 
 public interface BasketAppService {
 
-    void addToBasket(AddToBasketCmd cmd);
+    void addToBasket(AddToBasketDto cmd);
 
-    void removeFromBasket(RemoveFromBasketCmd cmd);
+    void removeFromBasket(RemoveFromBasketDto cmd);
 
     BasketView getBasket(String userId);
 }

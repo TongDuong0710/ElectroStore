@@ -14,5 +14,6 @@ public record ReceiptItem(
         BigDecimal unitPrice,
         BigDecimal originalSubtotal, // unitPrice * quantity
         BigDecimal discount,         // total discount for this line
-        BigDecimal finalSubtotal     // originalSubtotal - discount
+        BigDecimal finalSubtotal,    // originalSubtotal - discount
+        boolean appliedDeal          // whether a deal was applied to this item
 ) {}

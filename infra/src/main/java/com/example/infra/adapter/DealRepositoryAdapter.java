@@ -1,5 +1,7 @@
 package com.example.infra.adapter;
 
+import com.example.application.exceptions.AppResponseCode;
+import com.example.application.exceptions.ApplicationException;
 import com.example.application.provider.DealRepository;
 import com.example.domain.model.Deal;
 import com.example.infra.entity.DealEntity;
@@ -32,7 +34,7 @@ public class DealRepositoryAdapter implements DealRepository {
     @Override
     public Deal save(Deal deal) {
         ProductEntity productEntity = productJpaRepository.findById(deal.getProductId())
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+                .orElseThrow(() -> new ApplicationException(AppResponseCode.NOT_FOUND, "Product not found"));
 
         DealEntity entity = new DealEntity();
         entity.setProduct(productEntity);

@@ -1,6 +1,6 @@
 package com.example.application.mapper;
 
-import com.example.application.command.ProductFilter;
+import com.example.application.dto.ProductFilter;
 import com.example.application.configurations.MapStructCentralConfig;
 import com.example.domain.model.ProductFilterModel;
 import org.mapstruct.Mapper;

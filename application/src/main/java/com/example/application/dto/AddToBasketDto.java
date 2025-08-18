@@ -1,6 +1,6 @@
-package com.example.application.command;
+package com.example.application.dto;
 
-public record AddToBasketCmd(
+public record AddToBasketDto(
         String userId,
         Long productId,
         int quantity

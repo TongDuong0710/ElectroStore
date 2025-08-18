@@ -1,4 +1,4 @@
-package com.example.application.enums;
+package com.example.domain.exception;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,14 +8,18 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum ResponseCode {
-    SUCCESS(OK, "ES-0000", "Success"),
-    SERVER_ERROR(INTERNAL_SERVER_ERROR, "ES-5000", "Server error"),
+public enum ResponseCode{
+    NOT_FOUND(BAD_REQUEST, "DM-4000", "Server error"),
+    INSUFFICIENT_STOCK(BAD_REQUEST, "DM-4001", "Server error"),
+
+    REQUIRE_USER_ID(BAD_REQUEST, "DM-4002", "UserId required"),
+    PRODUCT_NOT_FOUND(BAD_REQUEST, "DM-4003", "Product not found"),
+    INVALID_PARAM(BAD_REQUEST, "DM-4004", "Invalid parameter"),
+
     ;
     private final HttpStatus httpStatus;
     private final String code;

@@ -6,11 +6,13 @@ import com.example.application.dto.ReceiptItemDto;
 import com.example.domain.model.Receipt;
 import com.example.domain.model.ReceiptItem;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", config = MapStructCentralConfig.class)
 public interface ReceiptAppMapper {
 
     ReceiptDto toDto(Receipt receipt);
 
+    @Mapping(target = "appliedDeal", source = "appliedDeal")
     ReceiptItemDto toItemDto(ReceiptItem item);
 }

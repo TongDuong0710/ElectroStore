@@ -1,10 +1,14 @@
 package com.example.api.dto;
 
+import java.math.BigDecimal;
+
 public record ReceiptItemResponse(
         Long productId,
-        String name,
+        String productName,
         int quantity,
-        double unitPrice,
-        double totalPrice,
-        String appliedDeal
+        BigDecimal unitPrice,
+        BigDecimal originalSubtotal,
+        BigDecimal discount,
+        BigDecimal finalSubtotal,
+        boolean appliedDeal
 ) {}

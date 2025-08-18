@@ -7,12 +7,17 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "deal",
+@Table(
+        name = "deal",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "unique_product_deal_type", columnNames = {"product_id", "deal_type"})
+        },
         indexes = {
                 @Index(name = "idx_deal_product_id", columnList = "product_id"),
                 @Index(name = "idx_deal_expiration_datetime", columnList = "expiration_datetime"),
                 @Index(name = "idx_deal_created_at_id", columnList = "created_at, id")
-        })
+        }
+)
 @Data
 public class DealEntity {
 
@@ -41,6 +46,7 @@ public class DealEntity {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @PreUpdate
-    void onUpdate() { this.updatedAt = LocalDateTime.now(); }
-
+    void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

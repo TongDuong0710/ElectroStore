@@ -9,6 +9,7 @@ import com.example.application.dto.DealDto;
 import com.example.application.service.AdminDealAppService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class AdminDealController {
 
     @Operation(summary = "Create a new deal for a product")
     @PostMapping
-    public BaseResponseApi<DealResponse> createDeal(@RequestBody DealCreateRequest request) {
+    public BaseResponseApi<DealResponse> createDeal(@Valid @RequestBody DealCreateRequest request) {
         DealDto dealDto = dealService.create(mapper.toCommand(request));
         return BaseResponseApi.success(mapper.toResponse(dealDto));
     }

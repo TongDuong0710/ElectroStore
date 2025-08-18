@@ -3,7 +3,7 @@ package com.example.api.mapper;
 import com.example.api.dto.DealCreateRequest;
 import com.example.api.dto.DealResponse;
 import com.example.api.dto.base.PageResponse;
-import com.example.application.command.DealCreateCmd;
+import com.example.application.dto.DealCreateDto;
 import com.example.application.configurations.MapStructCentralConfig;
 import com.example.application.dto.DealDto;
 import com.example.application.dto.PageResult;
@@ -16,7 +16,7 @@ import java.util.List;
 public interface DealApiMapper {
 
     @Mapping(target = "expirationDateTime", source = "expirationDateTime")
-    DealCreateCmd toCommand(DealCreateRequest request);
+    DealCreateDto toCommand(DealCreateRequest request);
 
     DealResponse toResponse(DealDto dto);
 

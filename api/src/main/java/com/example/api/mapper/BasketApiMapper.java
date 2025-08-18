@@ -3,7 +3,7 @@ package com.example.api.mapper;
 import com.example.api.dto.AddToBasketRequest;
 import com.example.api.dto.BasketItemResponse;
 import com.example.api.dto.BasketViewResponse;
-import com.example.application.command.AddToBasketCmd;
+import com.example.application.dto.AddToBasketDto;
 import com.example.application.configurations.MapStructCentralConfig;
 import com.example.application.dto.BasketItemView;
 import com.example.application.dto.BasketView;
@@ -13,9 +13,9 @@ import org.mapstruct.Mapping;
 @Mapper(config = MapStructCentralConfig.class)
 public interface BasketApiMapper {
 
-    // Vì AddToBasketCmd cần userId nên cần custom method
-    default AddToBasketCmd toCommand(String customerId, AddToBasketRequest request) {
-        return new AddToBasketCmd(
+    // Vì AddToBasketDto cần userId nên cần custom method
+    default AddToBasketDto toCommand(String customerId, AddToBasketRequest request) {
+        return new AddToBasketDto(
                 customerId,
                 request.productId(),
                 request.quantity()

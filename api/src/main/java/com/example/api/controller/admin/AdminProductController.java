@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -27,7 +28,7 @@ public class AdminProductController {
     @Operation(summary = "Create a new product")
     @PostMapping
     public BaseResponseApi<ProductResponse> createProduct(
-            @RequestBody ProductCreateRequest request) {
+            @Validated @RequestBody ProductCreateRequest request) {
         return BaseResponseApi.success(
                 mapper.toResponse(productService.create(mapper.toCommand(request)))
         );

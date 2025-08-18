@@ -30,8 +30,11 @@ CREATE TABLE deal (
     description         VARCHAR(255),
     expiration_datetime TIMESTAMP NOT NULL,
     created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT unique_product_deal_type UNIQUE (product_id, deal_type)
 );
+
 
 -- Index for join và filter deal expired agreements
 CREATE INDEX idx_deal_product_id          ON deal (product_id);

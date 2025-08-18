@@ -24,4 +24,3 @@ public interface BasketAppMapper {
         return items.stream().map(this::toItemView).collect(Collectors.toList());
     }
 }
-

@@ -1,7 +1,7 @@
 package com.example.application.service.impl;
 
 
-import com.example.application.command.DealCreateCmd;
+import com.example.application.dto.DealCreateDto;
 import com.example.application.dto.DealDto;
 import com.example.application.dto.PageResult;
 import com.example.application.mapper.DealAppMapper;
@@ -21,7 +21,7 @@ public class AdminDealAppServiceImpl implements AdminDealAppService {
     private final DealAppMapper dealMapper;
 
     @Override
-    public DealDto create(DealCreateCmd cmd) {
+    public DealDto create(DealCreateDto cmd) {
         Deal deal = dealMapper.toDomain(cmd);
         deal = dealRepository.save(deal);
         return dealMapper.toDto(deal);

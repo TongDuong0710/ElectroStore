@@ -1,6 +1,6 @@
 package com.example.application.service.impl;
 
-import com.example.application.command.ProductFilter;
+import com.example.application.dto.ProductFilter;
 import com.example.application.dto.PageResult;
 import com.example.application.dto.ProductSummaryDto;
 import com.example.application.mapper.ProductAppMapper;

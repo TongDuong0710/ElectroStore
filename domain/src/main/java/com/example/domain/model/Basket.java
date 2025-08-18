@@ -1,8 +1,12 @@
 package com.example.domain.model;
 
+import com.example.domain.exception.DomainException;
+import com.example.domain.exception.ResponseCode;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.*;
+
 @Data
 public class Basket {
     private Long id;
@@ -11,7 +15,7 @@ public class Basket {
     private final Map<Long, BasketItem> items = new LinkedHashMap<>();
 
     public Basket(Long id, String userId, Map<Long, BasketItem> items) {
-        if (userId == null || userId.isBlank()) throw new IllegalArgumentException("userId required");
+        if (userId == null || userId.isBlank()) throw new DomainException(ResponseCode.REQUIRE_USER_ID);
         this.id = id;
         this.userId = userId;
         if (items != null) {
@@ -31,7 +35,7 @@ public class Basket {
 
     /** FLOW: remove item entirely (application will restore stock accordingly) */
     public void removeProduct(Long productId) {
-        if (!items.containsKey(productId)) throw new NoSuchElementException("Item not found in basket");
+        if (!items.containsKey(productId)) throw new DomainException(ResponseCode.PRODUCT_NOT_FOUND);
         items.remove(productId);
     }
 
@@ -42,6 +46,16 @@ public class Basket {
     /** Returns a list of product IDs currently in the basket. */
     public List<Long> getProductIds() {
         return new ArrayList<>(items.keySet());
+    }
+
+    public BigDecimal calculateTotal(Map<Long, Product> productMap) {
+        return getItems().stream()
+            .map(item -> {
+                Product product = productMap.get(item.getProductId());
+                BigDecimal price = product != null ? product.getPrice() : BigDecimal.ZERO;
+                return price.multiply(BigDecimal.valueOf(item.getQuantity()));
+            })
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
 }

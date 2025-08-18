@@ -1,15 +1,21 @@
 package com.example.api.dto;
 
+import com.example.domain.model.DealType;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 public class DealCreateRequest {
+    @NotNull(message = "Product ID is required")
     private Long productId;
-    private String dealType; // e.g., "BUY_ONE_GET_ONE_50"
-    private BigDecimal discountPercentage;
+
+    @NotNull(message = "Deal type is required")
+    private DealType dealType;
+
+    @Future(message = "Expiration time must be in the future")
     private LocalDateTime expirationDateTime;
 }
 

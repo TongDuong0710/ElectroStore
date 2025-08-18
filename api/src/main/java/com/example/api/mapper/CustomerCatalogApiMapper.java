@@ -3,7 +3,7 @@ package com.example.api.mapper;
 import com.example.api.dto.ProductFilterRequest;
 import com.example.api.dto.ProductSummaryResponse;
 import com.example.api.dto.base.PageResponse;
-import com.example.application.command.ProductFilter;
+import com.example.application.dto.ProductFilter;
 import com.example.application.configurations.MapStructCentralConfig;
 import com.example.application.dto.PageResult;
 import com.example.application.dto.ProductSummaryDto;

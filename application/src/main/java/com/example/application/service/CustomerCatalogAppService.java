@@ -1,7 +1,7 @@
 package com.example.application.service;
 
 
-import com.example.application.command.ProductFilter;
+import com.example.application.dto.ProductFilter;
 import com.example.application.dto.PageResult;
 import com.example.application.dto.ProductSummaryDto;
 

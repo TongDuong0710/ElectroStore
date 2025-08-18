@@ -34,27 +34,56 @@ public class ReceiptCalculatorService {
 
             BigDecimal discount = BigDecimal.ZERO;
             Deal deal = activeDeals.get(p.getId());
-            if (deal != null && deal.isActiveAt(now) && deal.getDealType() == DealType.B1G50_2ND) {
-                // B1G50_2ND: each pair (2 items) → one at 50% off
-                int pairs = qty / 2;
-                BigDecimal halfPrice = unit.multiply(new BigDecimal("0.5"));
-                discount = halfPrice.multiply(BigDecimal.valueOf(pairs));
+
+            if (deal != null && deal.isActiveAt(now)) {
+                // Calculate discount based on the deal type
+                discount = calculateDiscountByDeal(deal, unit, qty);
             }
 
             discount = discount.setScale(2, RoundingMode.HALF_UP);
             BigDecimal finalSubtotal = original.subtract(discount);
 
             lines.add(new ReceiptItem(
-                    p.getId(), p.getName(), qty, unit, original, discount, finalSubtotal
+                    p.getId(),
+                    p.getName(),
+                    qty,
+                    unit,
+                    original,
+                    discount,
+                    finalSubtotal,
+                    discount.compareTo(BigDecimal.ZERO) > 0 // appliedDeal: true if discount > 0
             ));
+
             totalOriginal = totalOriginal.add(original);
             totalDiscount = totalDiscount.add(discount);
         }
 
         BigDecimal totalFinal = totalOriginal.subtract(totalDiscount).setScale(2, RoundingMode.HALF_UP);
-        return new Receipt(List.copyOf(lines),
+
+        return new Receipt(
+                List.copyOf(lines),
                 totalOriginal.setScale(2, RoundingMode.HALF_UP),
                 totalDiscount.setScale(2, RoundingMode.HALF_UP),
-                totalFinal);
+                totalFinal
+        );
+    }
+    private BigDecimal calculateDiscountByDeal(Deal deal, BigDecimal unitPrice, int quantity) {
+        return switch (deal.getDealType()) {
+            case B1G50_2ND -> calculateB1G50Discount(unitPrice, quantity);
+            case THIRTY_PERCENT_OFF -> calculatePercentOffDiscount(unitPrice, quantity, new BigDecimal("0.30"));
+            // case ... other deal types
+            default -> BigDecimal.ZERO;
+        };
+    }
+
+    private BigDecimal calculateB1G50Discount(BigDecimal unitPrice, int quantity) {
+        int pairs = quantity / 2;
+        BigDecimal halfPrice = unitPrice.multiply(new BigDecimal("0.5"));
+        return halfPrice.multiply(BigDecimal.valueOf(pairs));
+    }
+
+    private BigDecimal calculatePercentOffDiscount(BigDecimal unitPrice, int quantity, BigDecimal percent) {
+        BigDecimal original = unitPrice.multiply(BigDecimal.valueOf(quantity));
+        return original.multiply(percent);
     }
 }

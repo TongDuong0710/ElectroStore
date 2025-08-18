@@ -1,6 +1,6 @@
 package com.example.application.mapper;
 
-import com.example.application.command.ProductCreateCmd;
+import com.example.application.dto.ProductCreateDto;
 import com.example.application.configurations.MapStructCentralConfig;
 import com.example.application.dto.ProductDto;
 import com.example.application.dto.ProductSummaryDto;
@@ -10,7 +10,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", config = MapStructCentralConfig.class)
 public interface ProductAppMapper {
 
-    Product toDomain(ProductCreateCmd cmd);
+    Product toDomain(ProductCreateDto cmd);
 
     ProductDto toDto(Product product);
 

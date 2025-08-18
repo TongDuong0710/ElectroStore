@@ -1,10 +1,11 @@
 package com.example.api.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public record ReceiptResponse(
         List<ReceiptItemResponse> items,
-        double totalBeforeDiscount,
-        double totalDiscount,
-        double finalTotal
+        BigDecimal totalBeforeDiscount,
+        BigDecimal totalDiscount,
+        BigDecimal totalFinal
 ) {}

@@ -4,10 +4,11 @@ import java.math.BigDecimal;
 
 public record ReceiptItemDto(
         Long productId,
-        String name,
+        String productName,
         int quantity,
         BigDecimal unitPrice,
         BigDecimal originalSubtotal,
         BigDecimal discount,
-        BigDecimal finalSubtotal
+        BigDecimal finalSubtotal,
+        boolean appliedDeal
 ) {}

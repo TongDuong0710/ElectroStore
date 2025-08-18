@@ -10,6 +10,5 @@ public class DealResponse {
     private Long id;
     private Long productId;
     private String dealType;
-    private BigDecimal discountPercentage;
-    private LocalDateTime expirationTime;
+    private LocalDateTime expirationDateTime;
 }
