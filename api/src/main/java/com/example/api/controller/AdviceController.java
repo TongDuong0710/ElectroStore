@@ -5,12 +5,14 @@ import com.example.api.dto.base.FieldError;
 import com.example.application.exceptions.AppResponseCode;
 import com.example.application.exceptions.ApplicationException;
 import com.example.domain.exception.DomainException;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -119,6 +121,11 @@ public class AdviceController {
         }
 
         return BaseResponseApi.error("INVALID_REQUEST", message, null);
+    }
+    @ExceptionHandler({ ObjectOptimisticLockingFailureException.class, OptimisticLockException.class })
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public BaseResponseApi<?> handleOptimistic(Exception ex) {
+        return BaseResponseApi.error("ES-0409", "Concurrency conflict, please retry");
     }
 
 }

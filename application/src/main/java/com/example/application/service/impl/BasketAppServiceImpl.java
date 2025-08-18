@@ -1,9 +1,9 @@
 package com.example.application.service.impl;
 
 import com.example.application.dto.AddToBasketDto;
-import com.example.application.dto.RemoveFromBasketDto;
 import com.example.application.dto.BasketItemView;
 import com.example.application.dto.BasketView;
+import com.example.application.dto.RemoveFromBasketDto;
 import com.example.application.exceptions.AppResponseCode;
 import com.example.application.exceptions.ApplicationException;
 import com.example.application.mapper.BasketAppMapper;
@@ -33,23 +33,42 @@ public class BasketAppServiceImpl implements BasketAppService {
     @Override
     @Transactional
     public void addToBasket(AddToBasketDto cmd) {
-        // Get or create an open basket for the user
-        var basket = basketRepo.findOpenByUserId(cmd.userId())
-                .orElseGet(() -> basketRepo.save(new Basket(null, cmd.userId(), null)));
+        final int maxRetry = 5;
 
-        // Find the product or fail if not found
-        var product = productRepo.findById(cmd.productId())
-                .orElseThrow(() -> new ApplicationException(AppResponseCode.NOT_FOUND, "Product not found"));
+        for (int attempt = 1; attempt <= maxRetry; attempt++) {
+            try {
+                // 1) Lấy/khởi tạo basket OPEN cho user
+                var basket = basketRepo.findOpenByUserId(cmd.userId())
+                        .orElseGet(() -> basketRepo.save(new Basket(null, cmd.userId(), null)));
 
-        // Add item to basket (merge if already exists)
-        basket.addOrIncrease(new BasketItem(null,basket.getId(), product.getId(), cmd.quantity()));
+                // 2) Lấy product (đã bật @Version ở entity dưới infra)
+                var product = productRepo.findById(cmd.productId())
+                        .orElseThrow(() -> new ApplicationException(AppResponseCode.NOT_FOUND, "Product not found"));
 
-        // Decrease product stock and save
-        product.decrementStock(cmd.quantity());
-        productRepo.save(product);
+                if (cmd.quantity() <= 0) {
+                    throw new ApplicationException(AppResponseCode.INVALID_PARAM, "Quantity must be > 0");
+                }
+                if (!product.hasSufficientStock(cmd.quantity())) {
+                    throw new ApplicationException(AppResponseCode.INSUFFICIENT_STOCK, "Insufficient stock");
+                }
 
-        // Save basket with updated items
-        basketRepo.save(basket);
+                // 3) Giảm tồn kho (domain)
+                product.decrementStock(cmd.quantity());
+                // 4) Lưu product -> nếu có tranh chấp version sẽ ném OptimisticLock
+                productRepo.save(product);
+
+                // 5) Cập nhật basket (merge item)
+                basket.addOrIncrease(new BasketItem(null, basket.getId(), product.getId(), cmd.quantity()));
+                basketRepo.save(basket);
+
+                return; // OK
+            } catch (org.springframework.orm.ObjectOptimisticLockingFailureException
+                     | jakarta.persistence.OptimisticLockException e) {
+                if (attempt == maxRetry) {
+                    throw new ApplicationException(AppResponseCode.CONCURRENCY_CONFLICT, "Concurrency conflict, please retry");
+                }
+            }
+        }
     }
 
     @Override

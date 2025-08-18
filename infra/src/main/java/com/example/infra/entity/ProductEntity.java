@@ -54,4 +54,6 @@ public class ProductEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @Version
+    private Long version;
 }

@@ -11,7 +11,9 @@ public enum AppResponseCode {
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "DM-5000", "Server error"),
 
     NOT_FOUND(BAD_REQUEST, "DM-4000", "Not found"),
-    INVALID_PARAM(BAD_REQUEST, "DM-4002", "Invalid Parameter"),
+    INVALID_PARAM(BAD_REQUEST, "DM-4001", "Invalid Parameter"),
+    INSUFFICIENT_STOCK(CONFLICT, "DM-4003", "Insufficient stock"),
+    CONCURRENCY_CONFLICT(CONFLICT, "DM-4004", "Concurrency conflict"),
     ;
 
     private final HttpStatus httpStatus;

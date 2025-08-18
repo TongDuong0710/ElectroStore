@@ -2,7 +2,6 @@ package com.example.infra.mapper;
 
 import com.example.domain.model.BasketItem;
 import com.example.infra.configurations.MapStructCentralConfig;
-import com.example.infra.entity.BasketEntity;
 import com.example.infra.entity.BasketItemEntity;
 import com.example.infra.entity.ProductEntity;
 import org.mapstruct.Context;
@@ -40,22 +39,15 @@ public interface BasketItemMapper {
     // Domain -> new Entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "basketId", source = "basketId")
-    @Mapping(target = "product", expression = "java(refProduct(item.getProductId()))")
+    @Mapping(target = "product", expression = "java(getProductRef(item.getProductId(), em))")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    BasketItemEntity toNewEntity(@Context Long basketId, BasketItem item);
+    BasketItemEntity toNewEntity(@Context Long basketId,
+                                 @Context jakarta.persistence.EntityManager em,
+                                 BasketItem item);
 
-    // Helpers
-    default BasketEntity refBasket(Long id) {
-        if (id == null) return null;
-        BasketEntity b = new BasketEntity();
-        b.setId(id);
-        return b;
-    }
-    default ProductEntity refProduct(Long id) {
-        if (id == null) return null;
-        ProductEntity p = new ProductEntity();
-        p.setId(id);
-        return p;
+    // helper: lấy managed reference, KHÔNG tạo entity mới
+    default ProductEntity getProductRef(Long id, @Context jakarta.persistence.EntityManager em) {
+        return (id == null) ? null : em.getReference(ProductEntity.class, id);
     }
 }
