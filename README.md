@@ -27,14 +27,24 @@ pom.xml
     .\mvnw.cmd -f .\api\pom.xml spring-boot:run
 ```
 
+## Run with Docker compose
+```bash
+docker compose up -d --build
+```
+
+## Run with Docker
+```bash
+./mvnw -DskipTests package
+docker build -t electrostore-app .
+docker run --rm -p 8080:8080 electrostore-app
+```
+
 ## Test (one command)
 ```bash
     ./mvnw -pl api test
 ```
 
-## (Optional) Docker
-```bash
-./mvnw -DskipTests package
-docker build -t electrostore-app .
-docker run --rm -p 8080:8080 electrostore-app
+## Test a specific test class/method
+````bash
+    ./mvnw -pl api test -Dtest=ConcurrentAddStockTests
 ```
