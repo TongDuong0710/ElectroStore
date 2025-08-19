@@ -33,24 +33,21 @@ public class BasketAppServiceImpl implements BasketAppService {
     @Override
     @Transactional
     public void addToBasket(AddToBasketDto cmd) {
-        // Get or create an open basket for the user
+        if (cmd.quantity() <= 0)
+            throw new ApplicationException(AppResponseCode.INVALID_PARAM, "Quantity must be > 0");
+
         var basket = basketRepo.findOpenByUserId(cmd.userId())
                 .orElseGet(() -> basketRepo.save(new Basket(null, cmd.userId(), null)));
 
-        // Find the product or fail if not found
-        var product = productRepo.findById(cmd.productId())
-                .orElseThrow(() -> new ApplicationException(AppResponseCode.NOT_FOUND, "Product not found"));
+        boolean ok = productRepo.tryDecrementStock(cmd.productId(), cmd.quantity());
+        if (!ok) {
+            throw new ApplicationException(AppResponseCode.INSUFFICIENT_STOCK, "Insufficient stock"); // -> 409
+        }
 
-        // Add item to basket (merge if already exists)
-        basket.addOrIncrease(new BasketItem(null,basket.getId(), product.getId(), cmd.quantity()));
-
-        // Decrease product stock and save
-        product.decrementStock(cmd.quantity());
-        productRepo.save(product);
-
-        // Save basket with updated items
+        basket.addOrIncrease(new BasketItem(null, basket.getId(), cmd.productId(), cmd.quantity()));
         basketRepo.save(basket);
     }
+
 
     @Override
     @Transactional

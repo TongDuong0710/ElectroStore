@@ -8,6 +8,7 @@ import com.example.infra.repository.ProductJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,6 +64,18 @@ public class ProductRepositoryAdapter implements ProductRepository {
     @Override
     public List<Product> findAllByIds(List<Long> productIds) {
         return jpa.findAllById(productIds).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+    @Override
+    @Transactional
+    public boolean tryDecrementStock(Long productId, int qty) {
+        return jpa.tryDecrementStock(productId, qty) > 0;
+    }
+
+    @Override
+    public List<Product> findAll() {
+        return jpa.findAll().stream()
                 .map(mapper::toDomain)
                 .toList();
     }

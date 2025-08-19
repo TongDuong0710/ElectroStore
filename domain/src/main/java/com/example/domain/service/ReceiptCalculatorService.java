@@ -12,8 +12,8 @@ import java.util.*;
 public class ReceiptCalculatorService {
 
     /** FLOW:
-     * 1) App layer cung cấp: basket items, map productId->Product, map productId->active Deal (nếu có)
-     * 2) Domain calc: line-by-line, apply deal theo rule B1G50_2ND
+     * 1) The Application layer provides: basket items, a map of productId to Product, and a map of productId to active Deal (if any)
+     * 2) Domain calculation: process each line item, apply the deal based on the B1G50_2ND rule
      */
     public Receipt calculate(Collection<BasketItem> basketItems,
                              Map<Long, Product> products,

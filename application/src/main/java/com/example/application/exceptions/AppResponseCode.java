@@ -10,8 +10,10 @@ public enum AppResponseCode {
     SUCCESS(OK, "ES-0000", "Success"),
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "DM-5000", "Server error"),
 
-    NOT_FOUND(BAD_REQUEST, "DM-4000", "Not found"),
-    INVALID_PARAM(BAD_REQUEST, "DM-4002", "Invalid Parameter"),
+    NOT_FOUND(BAD_REQUEST, "APP-4000", "Not found"),
+    INVALID_PARAM(BAD_REQUEST, "APP-4002", "Invalid Parameter"),
+    INSUFFICIENT_STOCK(CONFLICT, "APP-0409", "Insufficient stock"),
+
     ;
 
     private final HttpStatus httpStatus;

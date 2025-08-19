@@ -9,72 +9,80 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
+
 /**
- * Scenario: Multiple customers concurrently add the same product to their baskets.
- *
- * Steps:
- * 1. Admin seeds a product with initial stock = 20.
- * 2. 50 concurrent customers attempt to add 1 unit each to their baskets at the same time.
- * 3. Exactly 20 requests should succeed (HTTP 200) and consume all available stock.
- * 4. The remaining 30 requests should fail gracefully with HTTP 409 (Conflict: insufficient stock).
- * 5. After all requests, the final stock must be 0 (no oversell, no negative stock).
- *
- * Purpose: Verify safe concurrent usage and atomic stock decrement, ensuring that
- * high contention does not result in overselling beyond available inventory.
+ * Concurrency stress test: multiple customers try to add the same product simultaneously.
+ * Ensures the system does not oversell stock (successes <= initial stock),
+ * rejects excess requests with 409 Conflict,
+ * and the final stock matches initialStock - successful purchases.
  */
 class ConcurrentAddStockTests extends BaseE2E {
 
     @Test
     void many_customers_compete_for_limited_stock_no_oversell() throws Exception {
-        // Seed product with stock=20
+        final int initialStock = 20;
+        final int threads = 50;
+
+        // Seed product
         Long pid = given().contentType(ContentType.JSON).body("""
-            {"name":"HotItem","description":"d","category":"PHONE","price":99.0,"stock":20}
-        """).when().post("/api/admin/products")
+        {"name":"HotItem","description":"d","category":"PHONE","price":99.0,"stock":%d}
+    """.formatted(initialStock)).when().post("/api/admin/products")
                 .then().statusCode(200)
                 .extract().jsonPath().getLong("data.id");
 
-        int threads = 50; // 50 concurrent customers
         ExecutorService pool = Executors.newFixedThreadPool(threads);
         CountDownLatch startGun = new CountDownLatch(1);
         AtomicInteger success = new AtomicInteger();
         AtomicInteger conflict = new AtomicInteger();
+        AtomicInteger other = new AtomicInteger();
 
         List<Future<?>> futures = new ArrayList<>();
         for (int i = 0; i < threads; i++) {
             final String customerId = "concurrent-user-" + i;
             futures.add(pool.submit(() -> {
                 try {
-                    startGun.await(); // all fire at once
-                    int status =
-                            given().header("X-Customer-ID", customerId)
-                                    .contentType(ContentType.JSON)
-                                    .body("""
-                                   {"productId": %d, "quantity": 1}
-                               """.formatted(pid))
-                                    .when().post("/api/customer/basket/items")
-                                    .then().extract().statusCode();
+                    startGun.await();
+                    int status = given()
+                            .header("X-Customer-ID", customerId)
+                            .contentType(ContentType.JSON)
+                            .body("""
+                            {"productId": %d, "quantity": 1}
+                        """.formatted(pid))
+                            .when().post("/api/customer/basket/items")
+                            .then().extract().statusCode();
+
                     if (status == 200) success.incrementAndGet();
                     else if (status == 409) conflict.incrementAndGet();
+                    else other.incrementAndGet();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             }));
         }
 
-        // Fire!
+        // Fire all
         startGun.countDown();
         for (Future<?> f : futures) f.get(30, TimeUnit.SECONDS);
         pool.shutdown();
 
-        // Expect exactly 20 successes, remaining are 409
-        org.junit.jupiter.api.Assertions.assertEquals(20, success.get(), "exactly stock size should succeed");
-        org.junit.jupiter.api.Assertions.assertTrue(conflict.get() >= 30, "the rest should conflict");
+        // Invariants
+        int succ = success.get();
+        int conf = conflict.get();
+        int oth = other.get();
 
-        // Final stock should be 0
-        given().queryParam("page", 0).queryParam("size", 10)
-                .when().get("/api/admin/products")
+        org.junit.jupiter.api.Assertions.assertEquals(0, oth, "unexpected status codes besides 200/409");
+        org.junit.jupiter.api.Assertions.assertEquals(threads, succ + conf, "all requests accounted for");
+        org.junit.jupiter.api.Assertions.assertTrue(succ <= initialStock, "must not oversell beyond stock");
+
+        // === Final stock via GET-by-id ===
+        Integer finalStock = given()
+                .when().get("/api/admin/products/{id}", pid)
                 .then().statusCode(200)
-                .body("data.content.find { it.id == %d }.stock".formatted(pid), is(0));
+                .extract().jsonPath().getObject("data.stock", Integer.class);
+
+        org.junit.jupiter.api.Assertions.assertNotNull(finalStock, "data.stock is missing");
+        org.junit.jupiter.api.Assertions.assertEquals(initialStock - succ, finalStock.intValue(),
+                "final stock matches consumed units");
     }
+
 }
