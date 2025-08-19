@@ -45,6 +45,15 @@ public interface BasketItemMapper {
     @Mapping(target = "updatedAt", ignore = true)
     BasketItemEntity toNewEntity(@Context Long basketId, BasketItem item);
 
+
+    // Domain -> new Entity
+    @Mapping(target = "id", source = "item.id")
+    @Mapping(target = "basketId", source = "basketId")
+    @Mapping(target = "product", expression = "java(refProduct(item.getProductId()))")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    BasketItemEntity toEntity(@Context Long basketId, BasketItem item);
+
     // Helpers
     default BasketEntity refBasket(Long id) {
         if (id == null) return null;

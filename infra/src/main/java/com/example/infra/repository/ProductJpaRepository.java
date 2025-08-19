@@ -42,15 +42,13 @@ public interface ProductJpaRepository extends JpaRepository<ProductEntity, Long>
                        @Param("maxPrice") BigDecimal priceMax);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query(
-            value = """
-    UPDATE product
-    SET stock = stock - :qty,
-        available = CASE WHEN (stock - :qty) > 0 THEN true ELSE false END
-    WHERE id = :id AND stock >= :qty
-    """,
-            nativeQuery = true
-    )
+    @Query(value = """
+        UPDATE product
+        SET stock = stock - :qty,
+            available = CASE WHEN (stock - :qty) > 0 THEN TRUE ELSE FALSE END
+        WHERE id = :id AND stock >= :qty
+    """, nativeQuery = true)
     int tryDecrementStock(@Param("id") Long productId, @Param("qty") int qty);
+
 
 }

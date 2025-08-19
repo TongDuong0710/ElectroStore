@@ -4,6 +4,8 @@ import com.example.application.dto.ProductCreateDto;
 import com.example.application.dto.ProductFilter;
 import com.example.application.dto.PageResult;
 import com.example.application.dto.ProductDto;
+import com.example.application.exceptions.AppResponseCode;
+import com.example.application.exceptions.ApplicationException;
 import com.example.application.mapper.ProductAppMapper;
 import com.example.application.mapper.ProductFilterMapper;
 import com.example.application.provider.ProductRepository;
@@ -54,5 +56,12 @@ public class AdminProductAppServiceImpl implements AdminProductAppService {
                 .map(productMapper::toDto)
                 .toList();
     }
-}
 
+    @Override
+    public ProductDto getProductById(Long productId) {
+        return productRepository.findById(productId)
+                .map(productMapper::toDto)
+                .orElseThrow(() -> new ApplicationException(AppResponseCode.NOT_FOUND,
+                        "Product not found with ID: " + productId));
+    }
+}

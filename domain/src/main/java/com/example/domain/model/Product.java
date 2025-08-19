@@ -5,6 +5,7 @@ import com.example.domain.exception.ResponseCode;
 import lombok.Data;
 
 import java.math.BigDecimal;
+
 @Data
 public class Product {
     private Long id;

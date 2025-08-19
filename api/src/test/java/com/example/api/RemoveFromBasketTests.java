@@ -55,7 +55,7 @@ class RemoveFromBasketTests extends BaseE2E {
                 .then().statusCode(200)
                 .body("data.content.find { it.id == %d }.stock".formatted(pid), is(5));
 
-        // Receipt empty (không còn line Removable)
+        // Receipt empty
         given().header("X-Customer-ID", CUSTOMER_ID)
                 .when().get("/api/customer/receipt")
                 .then().statusCode(200)

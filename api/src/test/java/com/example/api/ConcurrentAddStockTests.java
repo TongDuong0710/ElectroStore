@@ -11,16 +11,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static io.restassured.RestAssured.given;
 
 /**
- * Scenario: Multiple customers concurrently add the same product to their baskets.
- *
- * Steps:
- * 1. Seed a product with initial stock = 20.
- * 2. 50 concurrent customers attempt to add 1 unit each at the same time.
- * 3. System must NOT oversell: successes <= 20; failures are graceful with 409 Conflict.
- * 4. Final stock equals initialStock - successes.
- *
- * Purpose: Verify safe concurrent usage and atomic stock decrement (no oversell)
- * under high contention, regardless of locking strategy (optimistic/atomic SQL/etc.).
+ * Concurrency stress test: multiple customers try to add the same product simultaneously.
+ * Ensures the system does not oversell stock (successes <= initial stock),
+ * rejects excess requests with 409 Conflict,
+ * and the final stock matches initialStock - successful purchases.
  */
 class ConcurrentAddStockTests extends BaseE2E {
 
@@ -80,38 +74,15 @@ class ConcurrentAddStockTests extends BaseE2E {
         org.junit.jupiter.api.Assertions.assertEquals(threads, succ + conf, "all requests accounted for");
         org.junit.jupiter.api.Assertions.assertTrue(succ <= initialStock, "must not oversell beyond stock");
 
-        // === LẤY FINAL STOCK THEO CÁCH B: đọc list lớn + tìm bằng Java, có null-guard ===
-        var res = given()
-                .when().get("/api/admin/products/all")
+        // === Final stock via GET-by-id ===
+        Integer finalStock = given()
+                .when().get("/api/admin/products/{id}", pid)
                 .then().statusCode(200)
-                .extract().response();
+                .extract().jsonPath().getObject("data.stock", Integer.class);
 
-        java.util.List<java.util.Map<String, Object>> content =
-                res.jsonPath().getList("data");
-
-        java.util.Map<String, Object> found = null;
-        if (content != null) {
-            for (var item : content) {
-                Object idVal = item.get("id");
-                if (idVal != null && Long.valueOf(String.valueOf(idVal)).equals(pid)) {
-                    found = item;
-                    break;
-                }
-            }
-        }
-
-        org.junit.jupiter.api.Assertions.assertNotNull(
-                found,
-                () -> "Product " + pid + " not found in listing" +
-                        "Response:\n" + res.asString()
-        );
-
-        Object stockObj = found.get("stock");
-        org.junit.jupiter.api.Assertions.assertNotNull(stockObj, "stock field missing for product " + pid);
-        int finalStock = Integer.parseInt(String.valueOf(stockObj));
-
-        org.junit.jupiter.api.Assertions.assertEquals(
-                initialStock - succ, finalStock, "final stock matches consumed units"
-        );
+        org.junit.jupiter.api.Assertions.assertNotNull(finalStock, "data.stock is missing");
+        org.junit.jupiter.api.Assertions.assertEquals(initialStock - succ, finalStock.intValue(),
+                "final stock matches consumed units");
     }
+
 }

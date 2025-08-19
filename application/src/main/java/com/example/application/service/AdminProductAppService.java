@@ -16,5 +16,7 @@ public interface AdminProductAppService {
 
     PageResult<ProductDto> listProducts(ProductFilter filter, int page, int size);
     List<ProductDto> listAllProducts();
+    ProductDto getProductById(Long productId);
+
 
 }

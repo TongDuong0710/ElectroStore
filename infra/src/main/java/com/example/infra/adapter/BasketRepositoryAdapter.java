@@ -9,11 +9,11 @@ import com.example.infra.mapper.BasketMapper;
 import com.example.infra.repository.BasketJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -28,17 +28,33 @@ public class BasketRepositoryAdapter implements BasketRepository {
     }
 
     @Override
+    @Transactional
     public Basket save(Basket basket) {
-        BasketEntity e = new BasketEntity();
-        e.setId(basket.getId());  // If null, JPA will generate ID
-        e.setUserId(basket.getUserId());
-        List<BasketItemEntity> itemEntities = basket.getItems().stream()
-                .map(item -> basketItemMapper.toNewEntity(basket.getId(), item))
-                .collect(Collectors.toCollection(ArrayList::new));
+        final BasketEntity e;
 
-        e.setItems(itemEntities);
+        if (basket.getId() == null) {
+            // Create new owning entity
+            e = new BasketEntity();
+            e.setUserId(basket.getUserId());
+            e.setItems(new ArrayList<>()); // initialize once
+        } else {
+            // IMPORTANT: load a managed instance; do NOT new + setId
+            e = jpa.findById(basket.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Basket not found: " + basket.getId()));
+            e.setUserId(basket.getUserId());
 
-        // Save entity to DB
+            // IMPORTANT: mutate the managed collection in-place (do not e.setItems(newList))
+            e.getItems().clear();
+        }
+
+        // Map incoming items -> entities (set basketId / relationships as needed)
+        List<BasketItemEntity> mapped = basket.getItems().stream()
+                .map(item -> basketItemMapper.toEntity(e.getId(), item))
+                .toList();
+
+        // IMPORTANT: addAll on the existing managed collection
+        e.getItems().addAll(mapped);
+
         BasketEntity saved = jpa.save(e);
         return basketMapper.toDomain(saved);
     }

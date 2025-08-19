@@ -29,7 +29,7 @@ pom.xml
 
 ## Test (one command)
 ```bash
-    ./mvnw test
+    ./mvnw -pl api test
 ```
 
 ## (Optional) Docker

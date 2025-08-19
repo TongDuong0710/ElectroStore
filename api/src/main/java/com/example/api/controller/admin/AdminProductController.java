@@ -66,4 +66,11 @@ public class AdminProductController {
                 .toList();
         return BaseResponseApi.success(result);
     }
+    @Operation(summary = "Get product by ID - only for testing purposes")
+    @GetMapping("/{productId}")
+    public BaseResponseApi<ProductResponse> getProductById(
+            @Parameter(description = "ID of the product to retrieve") @PathVariable Long productId) {
+        var product = productService.getProductById(productId);
+        return BaseResponseApi.success(mapper.toResponse(product));
+    }
 }
